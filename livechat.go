@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -103,11 +104,12 @@ func main() {
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
-	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/", serveHome)
+	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
-	if err := http.ListenAndServe(*addr, nil); err != nil {
+	if err := http.ListenAndServeTLS(*addr, router); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 
