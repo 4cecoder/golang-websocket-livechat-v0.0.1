@@ -109,7 +109,7 @@ func main() {
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
-	if err := http.ListenAndServeTLS(*addr, router); err != nil {
+	if err := http.ListenAndServeTLS(*addr, "server.crt","server.key", router); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 
